@@ -329,7 +329,7 @@
 
           script = document.createElement('script');
           script.async = true;
-          script.src = GAS_URL + '?email=' + encodeURIComponent(email) + '&callback=' + cbName;
+          script.src = GAS_URL + '?email=' + encodeURIComponent(email) + '&callback=' + cbName + '&_debug=1';
           // diagnostic logs
           console.debug('[JSONP] injecting script', script.src);
           script.onload = function(ev){
