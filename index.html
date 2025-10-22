@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Runa3 Fitness - Próximamente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+  :root{
+      /* valores editables en px o porcentajes: ajusta a mano these values */
+  --input-top: 480px;
+  --button-top: 730px;
+  /* ancho editable para input y botón */
+  --input-width: 420px;
+  --button-width: 420px;
+
+    /* tamaño del logo: ajusta este valor para cambiar el tamaño */
+      --logo-size: 550px;
+      /* tamaño fijo para el icon superior (px) - no cambiará al redimensionar */
+      --icon-size: 480px;
+      /* vertical offsets (px) para las imágenes de fondo */
+      --icon-top: 10px;
+      --logo-top: 550px;
+    }
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Montserrat', Arial, sans-serif;
+    background-color: #000; /* fondo negro */
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+    /* background fixed container (bg-fixed) will sit behind content to ensure consistent sizing/positioning */
+    .bg-fixed {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0; /* behind main content which uses higher z-index */
+      background-color: #000;
+      background-image: url('icon.jpeg'), url('logo.jpeg');
+      background-repeat: no-repeat, no-repeat;
+      background-position: center var(--icon-top), center var(--logo-top);
+      background-size: var(--icon-size) auto, var(--logo-size) auto;
+      background-attachment: fixed;
+    }
+    .container {
+      background: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 24px 32px 16px 32px;
+      max-width: 420px;
+      text-align: center;
+      border: none;
+      position: relative;
+      top: 0px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      height: auto;
+      min-height: unset;
+      gap: 55px;
+    }
+
+    /* párrafo principal: convertido a fixed y editable mediante variables CSS */
+    .main-paragraph {
+      /* Barra posicionable y con ancho configurable vía variables CSS */
+      position: fixed;
+      top: var(--para-top);
+      left: var(--para-left);
+      transform: translateX(-50%);
+      width: var(--para-width);
+      /* en pantallas muy pequeñas evitar que desborde el viewport */
+      max-width: calc(100% - 24px);
+      box-sizing: border-box;
+      background: var(--para-bg);
+      padding: 18px 12px;
+      z-index: 9996; /* debajo del input/button pero encima del fondo */
+      pointer-events: auto;
+    }
+    /* contenido interno: centrado y restringido a --para-width */
+    .main-paragraph .para-line{
+      display: block;
+      max-width: var(--para-width);
+      margin: 0 auto var(--para-line-gap);
+      font-family: var(--para-font-family);
+
+      font-size: var(--para-font-size);
+      color: var(--para-color);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-align: center;
+      /* sombra suave para profundidad (sin borde negro) */
+      text-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    }
+    /* Control por línea: cada linea es un bloque con gap configurable */
+    :root{ --para-line-gap: 10px; }
+    .para-line{ display: block; margin-bottom: var(--para-line-gap); }
+    .notify {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 8px;
+      margin-top: 0;
+      position: relative;
+    }
+    input[type="email"] {
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1.5px solid #23272f;
+      /* fondo gris suave con más opacidad para que no se vea transparente */
+      background: rgba(255,255,255,0.10);
+      text-align: center; /* centrar el texto dentro del input */
+      color: #ffffff; /* texto visible */
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 8px;
+      transition: border 0.2s, background 0.15s;
+      width: var(--input-width);
+      box-sizing: border-box;
+    }
+    input[type="email"]::placeholder {
+      color: rgba(255,255,255,0.85);
+    }
+    /* placeholder style when input has validation error */
+    .fixed-input.input-error::placeholder { color: #ff6b6b; opacity: 1; }
+    .form-message { color: #ffb4b4; font-size: 0.95rem; margin-top: 8px; display: none; }
+    /* Posicionamiento del input controlado por .fixed-input-wrapper */
+    input[type="email"]:focus {
+      border: 1.5px solid #38bdf8;
+      /* ligero brillo en focus manteniendo tono suave */
+      background: rgba(56,189,248,0.08);
+    }
+    /* Wrapper fijo para centrar y permitir animar sin romper el input transform */
+    .fixed-input-wrapper {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      top: var(--input-top);
+      z-index: 9999;
+      pointer-events: auto;
+    }
+    .fixed-input {
+      position: relative;
+      left: 0;
+      transform: none;
+      width: var(--input-width);
+      text-align: center;
+      box-sizing: border-box;
+      display: inline-block;
+    }
+
+    /* Animación de vibrar: usamos transform para que sea consistente con translateX(-50%)
+       y funcione de forma fiable incluso con posicionamiento centrado. */
+    @keyframes shakeX {
+      0% { transform: translateX(-50%); }
+      10% { transform: translateX(calc(-50% - 12px)); }
+      20% { transform: translateX(calc(-50% + 12px)); }
+      30% { transform: translateX(calc(-50% - 8px)); }
+      40% { transform: translateX(calc(-50% + 8px)); }
+      50% { transform: translateX(calc(-50% - 4px)); }
+      60% { transform: translateX(calc(-50% + 4px)); }
+      100% { transform: translateX(-50%); }
+    }
+    .shake {
+      animation: shakeX 560ms cubic-bezier(.36,.07,.19,.97);
+    }
+    button {
+      background: linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px; /* match input vertical padding */
+      font-size: 1.08rem;
+      line-height: 1;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(34, 44, 48, 0.1);
+      transition: background 0.2s, box-shadow 0.2s;
+      letter-spacing: 0.5px;
+      width: var(--button-width);
+      box-sizing: border-box;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px; /* ensure comfortable touch target */
+    }
+    .fixed-button {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      top: var(--button-top);
+      z-index: 9999;
+      pointer-events: auto;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0ea5e9 0%, #38bdf8 100%);
+      box-shadow: 0 4px 16px rgba(56,189,248,0.18);
+    }
+    /* control panel removed per user request */
+    @media (max-width: 600px) {
+      /* En móvil el logo usa la misma posición que en web */
+      .bg-fixed {
+        background-attachment: fixed;
+        /* keep both images at fixed pixel sizes and positions on small screens */
+        background-size: var(--icon-size) auto, var(--logo-size) auto;
+        background-position: center var(--icon-top), center var(--logo-top);
+      }
+      .container {
+        padding: 32px 8px 24px 8px;
+        max-width: 98vw;
+      }
+      .logo {
+        width: 90px;
+      }
+    }
+    /* Footer removed: using background images instead */
+  </style>
+</head>
+<body>
+  <div class="bg-fixed" aria-hidden="true"></div>
+  <div class="container" style="position:relative;">
+    
+  <!-- formulario movido a overlay fijo (fuera del contenedor) -->
+  </div>
+  <!-- Footer removed; images are background on body -->
+  <!-- Overlay fijo con formulario -->
+  <div class="overlay-form" style="position:fixed; inset:0; pointer-events:none; z-index:9998;">
+    <form class="notify" name="notify-form" action="#" method="POST" novalidate style="pointer-events:auto;">
+      <div class="fixed-input-wrapper">
+        <input class="fixed-input" id="emailInput" type="email" name="email" placeholder="Déjanos tu email" required />
+        <div id="formMessage" class="form-message" aria-live="polite" style="display:none;"></div>
+      </div>
+      <div class="fixed-button">
+        <button id="sendBtn" type="submit">Avísame cuando esté lista</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- control panel removed -->
+
+  <script>
+    // Control de submit: si el input está vacío, hacer shake; si tiene valor, cambiar texto del botón
+    (function(){
+      const input = document.getElementById('emailInput');
+      const wrapper = input && input.parentElement;
+      const form = document.querySelector('form.notify');
+      const submitButton = form && form.querySelector('button[type="submit"]');
+
+      function triggerShake(){
+        if(!wrapper) return;
+        wrapper.classList.remove('shake');
+        void wrapper.offsetWidth;
+        wrapper.classList.add('shake');
+      }
+
+      if(form){
+  // Apps Script web app URL (deployed) - updated to the user's URL
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbxiUWb-l1E1iMO0-qwVyqrHUDFfK5dVFPtzrmIWGBzURmWqA_QMSIhmAjezcRT_HO2B/exec';
+
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+
+          // Validación: al menos formato básico de email
+          const emailVal = input ? input.value.trim() : '';
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          // store original placeholder to restore later
+          if(input && !input.dataset.origPlaceholder) input.dataset.origPlaceholder = input.getAttribute('placeholder') || '';
+
+          if(!emailVal || !emailRegex.test(emailVal)){
+            if(input){ input.value = ''; input.classList.add('input-error'); input.setAttribute('placeholder', 'Ingresá un correo válido'); }
+            triggerShake();
+            input && input.focus();
+            return;
+          }
+
+          // optimista: indicar envío
+          if(submitButton){
+            submitButton.textContent = 'Enviando...';
+            submitButton.disabled = true;
+            submitButton.setAttribute('aria-disabled', 'true');
+            submitButton.style.opacity = '0.85';
+            submitButton.style.cursor = 'default';
+          }
+
+          // Enviar usando JSONP para evitar CORS (Apps Script debe soportar callback)
+          sendViaJSONP(emailVal, function(err, res){
+            if(err){
+              if(submitButton){
+                submitButton.textContent = 'Error al enviar';
+                submitButton.disabled = false;
+                submitButton.removeAttribute('aria-disabled');
+                submitButton.style.opacity = '';
+                submitButton.style.cursor = '';
+              }
+              console.error('JSONP error', err);
+              alert('Error al enviar. Intenta de nuevo.');
+              return;
+            }
+
+            // éxito
+            if(submitButton) submitButton.textContent = 'Te notificaremos pronto.';
+            if(input){ input.value = ''; input.classList.remove('input-error'); input.setAttribute('placeholder', input.dataset.origPlaceholder || 'Déjanos tu email'); }
+          });
+        });
+
+        // JSONP helper: injecta <script> con callback param
+        function sendViaJSONP(email, cb){
+          const cbName = 'gsCb' + Date.now() + Math.floor(Math.random()*1000);
+          let script = null;
+          let timedOut = false;
+          const cleanup = function(){
+            try{ if(window[cbName]) delete window[cbName]; }catch(e){}
+            try{ if(script && script.parentNode) script.parentNode.removeChild(script); }catch(e){}
+          };
+
+          // success callback invoked by the JSONP response
+          window[cbName] = function(res){
+            if(timedOut) return; // ignore late responses
+            clearTimeout(timer);
+            try{ cb(null, res); } catch(e){ /* swallow callback errors */ }
+            cleanup();
+          };
+
+          script = document.createElement('script');
+          script.async = true;
+          script.src = GAS_URL + '?email=' + encodeURIComponent(email) + '&callback=' + cbName;
+          // diagnostic logs
+          console.debug('[JSONP] injecting script', script.src);
+          script.onload = function(ev){
+            console.debug('[JSONP] script loaded', script.src, ev);
+            // note: even if script loads, callback must be invoked by server
+          };
+          script.onerror = function(ev){
+            console.error('[JSONP] script.onerror for', script.src, ev);
+            if(timedOut) return;
+            clearTimeout(timer);
+            cleanup();
+            // fallback: submit using hidden iframe form to ensure the data is posted
+            try{ fallbackPost(email); }catch(e){}
+            try{ cb(new Error('JSONP script error — fallback submitted')); }catch(e){}
+          };
+          document.head.appendChild(script);
+
+          // timeout: if JSONP doesn't respond in reasonable time, clean up and fallback
+          const timer = setTimeout(function(){
+            timedOut = true;
+            cleanup();
+            try{ fallbackPost(email); }catch(e){}
+            try{ cb(new Error('JSONP timeout — fallback submitted')); }catch(e){}
+          }, 8000);
+
+          // Fallback: hidden iframe + form POST (no response available to JS but it posts data)
+          function fallbackPost(emailValue){
+            const iframeName = 'iframe_post_' + Date.now() + Math.floor(Math.random()*1000);
+            const iframe = document.createElement('iframe');
+            iframe.name = iframeName;
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+
+            const form = document.createElement('form');
+            form.action = GAS_URL;
+            form.method = 'POST';
+            form.target = iframeName;
+            form.style.display = 'none';
+
+            const inputField = document.createElement('input');
+            inputField.type = 'hidden';
+            inputField.name = 'email';
+            inputField.value = emailValue;
+            form.appendChild(inputField);
+
+            document.body.appendChild(form);
+            try{ form.submit(); }catch(e){ /* ignore submit errors */ }
+
+            // cleanup form and iframe after a short delay
+            setTimeout(function(){
+              try{ if(form.parentNode) form.parentNode.removeChild(form); }catch(e){}
+              setTimeout(function(){ try{ if(iframe.parentNode) iframe.parentNode.removeChild(iframe); }catch(e){} }, 2000);
+            }, 1500);
+          }
+        }
+      }
+
+      // limpiar la animación y estado de error cuando el usuario escribe
+      if(input){
+        input.addEventListener('input', function(){
+          wrapper && wrapper.classList.remove('shake');
+          input.classList.remove('input-error');
+          if(input.dataset.origPlaceholder) input.setAttribute('placeholder', input.dataset.origPlaceholder);
+        });
+      }
+    })();
+
+    // control panel removed
+  </script>
+</body>
+</html>

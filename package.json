@@ -1,0 +1,12 @@
+{
+  "name": "runa3-landing",
+  "version": "1.0.0",
+  "description": "Landing page para Runa3 Fitness - Próximamente",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}
